@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html lang="en">
+	<head>  
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<link rel="shortcut icon" href="/favicon.ico">
+		
+		<title>{{title}}</title> 
+		
+		<!-- Bootstrap core CSS -->
+		<link href="/bootstrap-3.1.1-dist/css/bootstrap.min.css" rel="stylesheet">
+
+		<!-- Custom styles for this template -->
+		<link href="/static/css/blog.css" rel="stylesheet">	
+	</head>
+	<body>
+		<div class="blog-masthead">
+		  <div class="container">
+			<nav class="blog-nav">
+			  <a class="blog-nav-item" href="/">Home</a>
+			  <a class="blog-nav-item" href="/about">About</a>
+			  {% if isAdmin %}<a class="blog-nav-item active" href="/admin">Admin</a>{% endif %}
+			</nav>
+		  </div>
+		</div>
+
+		<div class="container">
+
+		  <div class="blog-header">
+			<h1 class="blog-title">{{title}}</h1>
+			<p class="lead blog-description">{{subtitle}}</p>
+		  </div>
+
+		  <div class="row">
+		
+			<div class="col-sm-8 blog-main">
+
+		<h2 class="sub-header">Create new post</h2>
+		<a href="/admin/createpost" class="btn btn-primary btn-lg">Create post</a>
+		
+		<hr>
+		
+		<h2 class="sub-header">Modify existing posts</h2>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Post Name</th>
+                  <th></th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+			   {% for post in postList %}
+                <tr>
+                  <td><a href="/post/{{post.url}}">{{post.title}}</a></td>
+                  <td><a href="/admin/editpost/{{post.url}}" class="btn btn-default">Edit</a></td>
+                  <td><a href="/admin/deletepost/{{post.url}}" class="btn btn-disabled" disabled>Delete</a></td></td>
+                </tr>
+				{% endfor %}
+              </tbody>
+            </table>
+          </div>
+			</div> <!-- /.blog-main -->
+			<div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+			  <div class="sidebar-module sidebar-module-inset">
+				<h4>About</h4>
+				<p>{{about}}</p>
+			  </div>
+			  <div class="sidebar-module">
+				<h4>Tag Cloud</h4>
+				{% for key in tagCloud %}
+				<a href="/searchbytag/{{key}}/page/0" style="font-size: {{tagCloud[key]}}px;">{{key}}</a>
+				{% endfor %}
+			  </div>
+			  <div class="sidebar-module">
+				<h4>Elsewhere</h4>
+				<ol class="list-unstyled">
+				{% for linkName, link in otherLinks.items() %}
+				  <li><a href="{{link}}">{{linkName}}</a></li>
+				{% endfor %}
+				</ol>
+			  </div>
+			</div><!-- /.blog-sidebar -->
+
+		  </div><!-- /.row -->
+
+		</div><!-- /.container -->
+
+		<div class="blog-footer">
+		  <p>
+			<a href="#">Back to top</a>
+		  </p>
+		</div>
+		
+		<!-- Bootstrap core JavaScript
+		================================================== -->
+		<!-- Placed at the end of the document so the pages load faster -->
+		<script src="/jquery/1.11.0/jquery.min.js"></script>
+		<script src="/bootstrap-3.1.1-dist/js/bootstrap.min.js"></script>
+		<script src="/static/js/docs.min.js"></script>
+	</body>
+</html>
+{% endautoescape %}

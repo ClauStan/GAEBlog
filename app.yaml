@@ -1,0 +1,38 @@
+application: youraplicationid
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: yes
+
+handlers:
+- url: /favicon.ico
+  static_files: static/ico/favicon.ico
+  upload: static/ico/favicon.ico
+
+- url: /GameNo1
+  static_dir: GameNo1
+ 
+- url: /static
+  static_dir: static
+  
+- url: /bootstrap-3.1.1-dist
+  static_dir: bootstrap-3.1.1-dist
+  
+- url: /bootstrap-tagsinput
+  static_dir: bootstrap-tagsinput
+  
+- url: /jquery
+  static_dir: jquery
+  
+- url: /admin.*
+  script: main.app
+  login: admin
+  
+- url: /.*
+  script: main.app
+
+libraries:
+- name: webapp2
+  version: latest
+- name: jinja2
+  version: latest
