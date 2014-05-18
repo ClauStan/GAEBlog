@@ -14,6 +14,8 @@ from google.appengine.ext import db
 from google.appengine.api import users
 from google.appengine.api import memcache
 
+from blog_static import StaticValues
+
 JINJA_ENVIRONMENT = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)), extensions=['jinja2.ext.autoescape'])
 
 class Post(db.Model):
@@ -43,12 +45,6 @@ class Comment(db.Model):
 	date_created = db.DateTimeProperty(auto_now_add=True)
 
 class Utility():
-        postsPerPage = 4
-        title = "Blog Title"
-        subtitle = "blog subtitle"
-        about = "Brief text about your blog"
-        otherLinks = {"My 1st cool link":"https://google.com/" , "My 2st cool link":"https://appspot.com"}
-
         @staticmethod
         def Slugify(inStr):
                 removelist = ["a", "an", "as", "at", "before", "but", "by", "for", "from", "is", "in", "into", "like", "of", "off", "on", "onto", "per", "since", "than", "the", "this", "that", "to", "up", "via", "with"];
@@ -103,22 +99,22 @@ class Utility():
 
         @staticmethod
 	def SetStaticBlogValues(template):
-                template['title'] = Utility.title
-                template['subtitle'] = Utility.subtitle
-                template['about'] = Utility.about
-                template['otherLinks'] = Utility.otherLinks
+                template['title'] = StaticValues.title
+                template['subtitle'] = StaticValues.subtitle
+                template['about'] = StaticValues.about
+                template['otherLinks'] = StaticValues.otherLinks
                 
 
 class HomePage(webapp2.RequestHandler):
         def get(self):
                 postAll = Post.all()
                 postAll.order("-date_created")
-                postList = postAll.fetch(limit=Utility.postsPerPage)
+                postList = postAll.fetch(limit=StaticValues.postsPerPage)
 
                 template_values = {'postList' : postList}
 
                 count = Post.all(keys_only=True).count()
-                if(count>Utility.postsPerPage):
+                if(count>StaticValues.postsPerPage):
                         template_values['rightButton'] = '1'
 
                 tagCloud = Utility.GetFontSizes()
@@ -136,16 +132,16 @@ class NamePage(webapp2.RequestHandler):
         def get(self, page_nr):
                 pageNr = int(page_nr)
                 count = Post.all(keys_only=True).count()
-                if (pageNr == 0 or (pageNr*Utility.postsPerPage+1 <= count)):
+                if (pageNr == 0 or (pageNr*StaticValues.postsPerPage+1 <= count)):
                         postAll = Post.all()
                         postAll.order("-date_created")
-                        postList = postAll.fetch(offset=pageNr*Utility.postsPerPage, limit=Utility.postsPerPage)
+                        postList = postAll.fetch(offset=pageNr*StaticValues.postsPerPage, limit=StaticValues.postsPerPage)
 
                         template_values = {'postList' : postList}
                         
                         if(pageNr>0):
                                 template_values['leftButton'] = str(pageNr-1)
-                        if((pageNr+1)*Utility.postsPerPage < count):
+                        if((pageNr+1)*StaticValues.postsPerPage < count):
                                 template_values['rightButton'] = str(pageNr+1)
 
                         tagCloud = Utility.GetFontSizes()
@@ -165,16 +161,16 @@ class SearchByTagPage(webapp2.RequestHandler):
         def get(self, tag, page_nr):
                 pageNr = int(page_nr)
                 count = Post.gql("WHERE tags = :1", tag).count()
-                if ((pageNr == 0 and count > 0) or (pageNr*Utility.postsPerPage+1 <= count)):
+                if ((pageNr == 0 and count > 0) or (pageNr*StaticValues.postsPerPage+1 <= count)):
                         postWithTags = Post.gql("WHERE tags = :1 ORDER by date_created DESC", tag)
-                        postList = postWithTags.fetch(offset=pageNr*Utility.postsPerPage, limit=Utility.postsPerPage)
+                        postList = postWithTags.fetch(offset=pageNr*StaticValues.postsPerPage, limit=StaticValues.postsPerPage)
                         
                         template_values = {'postList' : postList}
                         template_values['tag'] = tag
                         
                         if(pageNr>0):
                                 template_values['leftButton'] = str(pageNr-1)
-                        if((pageNr+1)*Utility.postsPerPage < count):
+                        if((pageNr+1)*StaticValues.postsPerPage < count):
                                 template_values['rightButton'] = str(pageNr+1)
 
                         tagCloud = Utility.GetFontSizes()
@@ -194,9 +190,9 @@ class SearchByAuthorPage(webapp2.RequestHandler):
         def get(self, author_slug, page_nr):
                 pageNr = int(page_nr)
                 count = Post.gql("WHERE author_slug = :1", author_slug).count()
-                if ((pageNr == 0 and count > 0) or (pageNr*Utility.postsPerPage+1 <= count)):
+                if ((pageNr == 0 and count > 0) or (pageNr*StaticValues.postsPerPage+1 <= count)):
                         postByAuthor = Post.gql("WHERE author_slug = :1 ORDER by date_created DESC", author_slug)
-                        postList = postByAuthor.fetch(offset=pageNr*Utility.postsPerPage, limit=Utility.postsPerPage)
+                        postList = postByAuthor.fetch(offset=pageNr*StaticValues.postsPerPage, limit=StaticValues.postsPerPage)
                         
                         template_values = {'postList' : postList}
                         template_values['author_slug'] = author_slug
@@ -209,7 +205,7 @@ class SearchByAuthorPage(webapp2.RequestHandler):
                      
                         if(pageNr>0):
                                 template_values['leftButton'] = str(pageNr-1)
-                        if((pageNr+1)*Utility.postsPerPage < count):
+                        if((pageNr+1)*StaticValues.postsPerPage < count):
                                 template_values['rightButton'] = str(pageNr+1)
 
                         tagCloud = Utility.GetFontSizes()
